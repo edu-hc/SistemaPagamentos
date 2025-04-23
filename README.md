@@ -1,6 +1,6 @@
 # 💳 Sistema de Pagamentos
 
-Este é um sistema de pagamentos simplificado, inspirado no PicPay, com funcionalidades básicas de autenticação, transações e gerenciamento de usuários, idealizado para compor meu portfólio.
+Este é um sistema de pagamentos simplificado, com funcionalidades básicas de autenticação, transações e gerenciamento de usuários, idealizado para compor meu portfólio.
 
 ## 🚀 Tecnologias utilizadas
 
