@@ -2,7 +2,7 @@ package com.abs.pagamentos.controllers;
 
 import com.abs.pagamentos.dtos.AuthenticationDTO;
 import com.abs.pagamentos.dtos.LoginResponseDTO;
-import com.abs.pagamentos.dtos.RegisterDTO;
+import com.abs.pagamentos.dtos.UserDTO;
 import com.abs.pagamentos.model.user.User;
 import com.abs.pagamentos.repositories.UserRepository;
 import com.abs.pagamentos.services.TokenService;
@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,13 +41,13 @@ public class AuthenticationController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity register(@RequestBody @Valid RegisterDTO data) {
-        if(userRepository.findUserByEmail(data.email()) != null) {
+    public ResponseEntity register(@RequestBody @Valid UserDTO data) {
+        if(userRepository.findUserByEmail(data.email()).isPresent()) {
             return ResponseEntity.badRequest().build();
         }
 
         String encryptedPassword = new BCryptPasswordEncoder().encode(data.password());
-        User newUser = new User(data.email(), encryptedPassword, data.role());
+        User newUser = new User(data.firstName(), data.lastName(), data.document(), data.email(), encryptedPassword, data.balance(), data.userType());
 
         userRepository.save(newUser);
 

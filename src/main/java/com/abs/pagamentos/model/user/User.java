@@ -24,15 +24,20 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+    @Column(name = "first_name", nullable = false)
     private String firstName;
+    @Column(name = "last_name", nullable = false)
     private String lastName;
-    @Column(unique=true)
+    @Column(nullable = false, unique=true)
     private String document;
-    @Column(unique=true)
+    @Column(nullable = false, unique=true)
     private String email;
+    @Column(nullable = false)
     private String password;
+    @Column(nullable = false)
     private BigDecimal balance;
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private UserType userType;
 
     public User(UserDTO data) {
@@ -45,9 +50,13 @@ public class User implements UserDetails {
         this.userType = data.userType();
     }
 
-    public User(String email, String password, UserType role) {
+    public User(String firstName, String lastName, String document, String email, String password, BigDecimal balance, UserType role) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.document = document;
         this.email = email;
         this.password = password;
+        this.balance = balance;
         this.userType = role;
     }
 

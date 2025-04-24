@@ -1,5 +1,5 @@
 CREATE TABLE transactions (
-    id BIGINT PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     amount NUMERIC(19, 2) NOT NULL,
     sender_id BIGINT NOT NULL,
     receiver_id BIGINT NOT NULL,
