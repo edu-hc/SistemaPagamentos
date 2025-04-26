@@ -170,15 +170,6 @@ public class TransactionReportService {
         return cell;
     }
 
-    private String generatePdfFileName(Transaction transaction) {
-        String timestamp = transaction.getTimestamp()
-                .format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
-
-        return String.format("TRX_%d_%s.pdf",
-                transaction.getId(),
-                timestamp);
-    }
-
     private String formatCurrency(BigDecimal amount) {
         return "R$ " + String.format("%,.2f", amount);
     }
@@ -191,7 +182,7 @@ public class TransactionReportService {
 
     public byte[] getTransactionPdfContent(Transaction transaction) throws IOException, DocumentException {
         // Gera a chave do arquivo no padrão estabelecido
-        String fileKey = "TRX_" + transaction.getId() + ".pdf";
+        String fileKey = "receipt_" + transaction.getId() + ".pdf";
 
         try {
             // 1. Tenta recuperar do S3 usando o serviço dedicado
