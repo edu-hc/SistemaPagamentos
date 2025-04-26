@@ -28,9 +28,6 @@ public class TransactionService {
     @Autowired
     private RestTemplate restTemplate;
 
-    @Autowired
-    private NotificationService notificationService;
-
     public Transaction createTransaction(TransactionDTO transaction) throws Exception {
         User sender = userService.findUserById(transaction.senderId());
         User receiver = userService.findUserById(transaction.receiverId());
