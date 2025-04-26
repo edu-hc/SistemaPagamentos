@@ -28,13 +28,6 @@ import java.util.Date;
             this.amazonS3 = amazonS3;
         }
 
-        /**
-         * Armazena um arquivo no S3
-         * @param content Bytes do arquivo
-         * @param fileName Nome do arquivo
-         * @param contentType Tipo MIME
-         * @return URL pública do arquivo
-         */
         public String uploadFile(byte[] content, String fileName, String contentType) {
             String fileKey = receiptsFolder + "/" + fileName;
 
@@ -50,11 +43,6 @@ import java.util.Date;
             return amazonS3.getUrl(bucketName, fileKey).toString();
         }
 
-        /**
-         * Recupera um arquivo do S3
-         * @param fileKey Chave completa do arquivo
-         * @return Conteúdo do arquivo
-         */
         public byte[] getFile(String fileKey) throws IOException {
             S3Object s3Object = amazonS3.getObject(bucketName, fileKey);
             try (InputStream inputStream = s3Object.getObjectContent()) {
@@ -62,12 +50,6 @@ import java.util.Date;
             }
         }
 
-        /**
-         * Gera uma URL pré-assinada para download temporário
-         * @param fileKey Chave do arquivo
-         * @param expirationMinutes Tempo de expiração em minutos
-         * @return URL pré-assinada
-         */
         public String generatePresignedUrl(String fileKey, int expirationMinutes) {
             Date expiration = new Date();
             long expTimeMillis = expiration.getTime() + (expirationMinutes * 60 * 1000);
@@ -82,9 +64,6 @@ import java.util.Date;
             return url.toString();
         }
 
-        /**
-         * Verifica se um arquivo existe no S3
-         */
         public boolean fileExists(String fileKey) {
             try {
                 amazonS3.getObjectMetadata(bucketName, fileKey);

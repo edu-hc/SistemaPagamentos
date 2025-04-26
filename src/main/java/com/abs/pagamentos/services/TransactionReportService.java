@@ -33,11 +33,6 @@ public class TransactionReportService {
         this.transactionRepository = transactionRepository;
     }
 
-    /**
-     * Gera e armazena o PDF da transação no S3
-     * @param transactionId Transação a ser documentada
-     * @return URL do PDF no S3
-     */
     public String generateAndStoreTransactionPdf(Long transactionId) {
         Transaction transaction = transactionRepository.findById(transactionId)
                 .orElseThrow(() -> new EntityNotFoundException("Transação não encontrada"));
@@ -71,12 +66,6 @@ public class TransactionReportService {
     private void addDocumentHeader(Document document, Transaction transaction) throws DocumentException {
         Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 18, BaseColor.DARK_GRAY);
         Font subtitleFont = FontFactory.getFont(FontFactory.HELVETICA, 12, BaseColor.GRAY);
-
-        // Logo (opcional)
-        // Image logo = Image.getInstance("path/to/logo.png");
-        // logo.scaleToFit(100, 100);
-        // logo.setAlignment(Element.ALIGN_CENTER);
-        // document.add(logo);
 
         Paragraph title = new Paragraph("COMPROVANTE DE TRANSAÇÃO", titleFont);
         title.setAlignment(Element.ALIGN_CENTER);

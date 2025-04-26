@@ -31,17 +31,13 @@ public class TransactionController {
     @GetMapping("/{id}/report")
     public ResponseEntity<byte[]> downloadReceipt(@PathVariable Long id) {
         try {
-            // 1. Busca a transação
             Transaction transaction = transactionService.getTransactionById(id);
 
-            // 2. Gera ou recupera o PDF
             byte[] pdfContent = reportService.getTransactionPdfContent(transaction);
 
-            // 3. Configura os headers da resposta
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_PDF);
 
-            // Define o nome do arquivo para download
             String filename = "comprovante_transacao_" + id + ".pdf";
             headers.setContentDisposition(
                     ContentDisposition.builder("attachment")
@@ -50,7 +46,6 @@ public class TransactionController {
 
             headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
 
-            // 4. Retorna o PDF
             return new ResponseEntity<>(pdfContent, headers, HttpStatus.OK);
 
         } catch (EntityNotFoundException e) {
