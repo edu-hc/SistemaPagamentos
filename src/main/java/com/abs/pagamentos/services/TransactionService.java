@@ -35,39 +35,60 @@ public class TransactionService {
         User sender = userService.findUserById(transaction.senderId());
         User receiver = userService.findUserById(transaction.receiverId());
 
-        userService.validateTransaction(sender, transaction.value());
+        userService.validateTransaction(sender, transaction.amount());
 
-        boolean isAuthorized = this.authorizeTransaction(sender, transaction.value());
+        boolean isAuthorized = this.authorizeTransaction(sender, transaction.amount());
 
         if(!isAuthorized) {
             throw new Exception("Transação não autorizada");
         }
 
         Transaction newTransaction = new Transaction();
-        newTransaction.setAmount(transaction.value());
+        newTransaction.setAmount(transaction.amount());
         newTransaction.setSender(sender);
         newTransaction.setReceiver(receiver);
         newTransaction.setTimestamp(LocalDateTime.now());
 
-        sender.setBalance(sender.getBalance().subtract(transaction.value()));
-        receiver.setBalance(receiver.getBalance().add(transaction.value()));
+        sender.setBalance(sender.getBalance().subtract(transaction.amount()));
+        receiver.setBalance(receiver.getBalance().add(transaction.amount()));
 
         transactionRepository.save(newTransaction);
         userService.saveUser(sender);
         userService.saveUser(receiver);
 
-        notificationService.sendNotification(sender, "Transação realizada com sucesso");
-        notificationService.sendNotification(receiver, "Transação recebida com sucesso");
-
         return newTransaction;
     }
 
     public boolean authorizeTransaction(User sender, BigDecimal value) {
-        ResponseEntity<Map> authorizationResponse = restTemplate.getForEntity("https://util.devi.tools/api/v2/authorize", Map.class);
+        try {
+            ResponseEntity<Map> response = restTemplate.getForEntity(
+                    "https://util.devi.tools/api/v2/authorize",
+                    Map.class
+            );
 
-        if(authorizationResponse.getStatusCode() == HttpStatus.OK && authorizationResponse.getBody().get("message") == "Autorizado") {
-            String message = (String) authorizationResponse.getBody().get("message");
-            return "Autorizado".equalsIgnoreCase(message);
-        } else return false;
+            if (response.getStatusCode() == HttpStatus.OK) {
+                Map<String, Object> responseBody = response.getBody();
+
+                // Verificação segura com tratamento de null
+                if (responseBody != null &&
+                        "success".equalsIgnoreCase((String) responseBody.get("status"))) {
+
+                    Map<String, Object> data = (Map<String, Object>) responseBody.get("data");
+                    if (data != null) {
+                        Boolean isAuthorized = (Boolean) data.get("authorization");
+                        return Boolean.TRUE.equals(isAuthorized);
+                    }
+                }
+            }
+            return false;
+
+        } catch (Exception e) {
+            return false;
+        }
     }
+
+    public Transaction getTransactionById (Long id) throws Exception {
+        return transactionRepository.findById(id).orElseThrow(() -> new Exception("Transação não encontrada"));
+    }
+
 }
